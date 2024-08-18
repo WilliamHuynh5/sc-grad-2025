@@ -75,6 +75,20 @@ func GetAllFolders(req *FetchFolderRequest) (*FetchFolderResponse, error) {
 The `FetchAllFoldersByOrgID` function returns all folders that match the `orgID` parameter given.
 On success, a slice of Folder pointers is returned.
 On failure, an error is returned
+
+Assumption: For the function `GetSampleData()`, there is a possibility that the filepath will not exist, resulting
+in a `panic`. It will be assumed then that `FetchAllFoldersByOrgID` has no requirement to  handle this gracefully
+and that all inputs for this assessment will be 'valid'. (`sample.json` will always exist)
+
+Assumption: When there are no Folders that match the given `orgID`, an empty slice will be returned.
+There is no need to throw an error.
+
+There are some improvements that can be made to this code.
+
+ 1. Error Handling
+    The `orgID` passed in may be `nil`.
+    Suggestion:
+    Return an error accordingly if this occurs.
 */
 func FetchAllFoldersByOrgID(orgID uuid.UUID) ([]*Folder, error) {
 	folders := GetSampleData()
