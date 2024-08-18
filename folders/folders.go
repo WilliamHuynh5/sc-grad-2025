@@ -45,6 +45,8 @@ There are some improvements that can be made to this code.
     Suggestion:
     Handle errors that could be thrown by `FetchAllFoldersByOrgID`.
     Handle the case where `req` may be `nil`
+    Additionally, a custom error class can be created allowing for better maintainability and readbility
+    of `GetAllFolders`.
 
  4. Syntax / style
     The variable `ffr` is declared on one line, and then assigned on another line.
@@ -52,23 +54,14 @@ There are some improvements that can be made to this code.
     Use Golang's `:=` operatior to declare and assign the value on a single line.
 */
 func GetAllFolders(req *FetchFolderRequest) (*FetchFolderResponse, error) {
-	// var (
-	// 	err error
-	// 	f1  Folder
-	// 	fs  []*Folder
-	// )
-	f := []Folder{}
-	r, _ := FetchAllFoldersByOrgID(req.OrgID)
-	for _, v := range r {
-		f = append(f, *v)
+	if req == nil {
+		return nil, NewFetchFolderError(ErrInvalidRequest)
 	}
-	var fp []*Folder
-	for _, v1 := range f {
-		fp = append(fp, &v1)
+	folders, err := FetchAllFoldersByOrgID(req.OrgID)
+	if err != nil {
+		return nil, err
 	}
-	var ffr *FetchFolderResponse
-	ffr = &FetchFolderResponse{Folders: fp}
-	return ffr, nil
+	return &FetchFolderResponse{Folders: folders}, nil
 }
 
 /*
@@ -91,6 +84,9 @@ There are some improvements that can be made to this code.
     Return an error accordingly if this occurs.
 */
 func FetchAllFoldersByOrgID(orgID uuid.UUID) ([]*Folder, error) {
+	if orgID == uuid.Nil {
+		return nil, NewFetchFolderError(ErrInvalidUUID)
+	}
 	folders := GetSampleData()
 
 	resFolder := []*Folder{}
