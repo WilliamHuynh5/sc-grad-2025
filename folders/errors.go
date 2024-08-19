@@ -17,11 +17,15 @@ type FetchFolderError struct {
 const (
 	ErrInvalidRequest FetchFolderErrorCode = iota
 	ErrInvalidUUID    FetchFolderErrorCode = iota
+	ErrInvalidLimit   FetchFolderErrorCode = iota
+	ErrInvalidCursor  FetchFolderErrorCode = iota
 )
 
 var errorMessages = map[FetchFolderErrorCode]string{
 	ErrInvalidRequest: "invalid request, request cannot be nil",
 	ErrInvalidUUID:    "invalid UUID, uuid cannot be found",
+	ErrInvalidLimit:   "invalid limit, limit should be >= 0",
+	ErrInvalidCursor:  "invalid cursor, should be in format `cursor:*`",
 }
 
 func (e *FetchFolderError) Error() string {
